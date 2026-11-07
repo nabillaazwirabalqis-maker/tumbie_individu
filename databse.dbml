@@ -1,0 +1,75 @@
+
+Table users {
+  id_user int [pk, increment]
+  nama_user varchar(100) [not null]
+  username varchar(50) [unique, not null]
+  password varchar(255) [not null]
+  role varchar(20) [not null]
+}
+
+Table ibu {
+  id_ibu int [pk, increment]
+  id_user int [unique, not null]
+  nama_ibu varchar(100) [not null]
+  nik varchar(16) [unique, not null]
+  tanggal_lahir date
+  alamat text
+  no_hp varchar(15)
+}
+
+Table anak {
+  id_anak int [pk, increment]
+  id_ibu int [not null]
+  nama_anak varchar(100) [not null]
+  tanggal_lahir date [not null]
+  jenis_kelamin varchar(10) [not null]
+}
+
+Table pemeriksaan {
+  id_pemeriksaan int [pk, increment]
+  id_anak int [not null]
+  tanggal_pemeriksaan date [not null]
+  berat_badan numeric(5,2)
+  tinggi_badan numeric(5,2)
+  lingkar_kepala numeric(5,2)
+  jenis_imunisasi varchar(100)
+}
+
+Table jadwal_posyandu {
+  id_jadwal int [pk, increment]
+  id_user int [not null]
+  nama_kegiatan varchar(100) [not null]
+  tanggal date [not null]
+  waktu time
+  lokasi varchar(150)
+  keterangan text
+}
+
+Table notifikasi {
+  id_notifikasi int [pk, increment]
+  id_user int [not null]
+  judul varchar(100) [not null]
+  pesan text
+  tanggal_notifikasi timestamp
+  status_dibaca boolean
+}
+
+Table peserta_jadwal {
+  id_peserta int [pk, increment]
+  id_jadwal int [not null]
+  id_anak int [not null]
+  status_kehadiran varchar(20)
+  tanggal_daftar timestamp
+
+  indexes {
+    (id_jadwal, id_anak) [unique]
+  }
+}
+
+Ref: ibu.id_user - users.id_user
+Ref: anak.id_ibu > ibu.id_ibu
+Ref: pemeriksaan.id_anak > anak.id_anak
+Ref: jadwal_posyandu.id_user > users.id_user
+Ref: notifikasi.id_user > users.id_user
+Ref: peserta_jadwal.id_jadwal > jadwal_posyandu.id_jadwal
+Ref: peserta_jadwal.id_anak > anak.id_anak
